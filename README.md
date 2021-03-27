@@ -1,1 +1,1 @@
-# next-graphql
+Test project using grphql api and next frontend
