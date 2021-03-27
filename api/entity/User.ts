@@ -9,10 +9,10 @@ export class User {
 
     @Field()
     @Property({ required: true })
-    email: String;
+    email: string;
 
     @Property({ required: true })
-    password: String;
+    password: string;
 }
 
 export const UserModel = getModelForClass(User);
