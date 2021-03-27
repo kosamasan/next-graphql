@@ -1,1 +1,1 @@
-Test project using grphql api and next frontend
+Test project using grphql api and next frontend.
