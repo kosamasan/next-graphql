@@ -12,7 +12,59 @@ import { isAuth } from '../middleware/isAuth';
 export class StreamResolver {
     @Query(() => Stream, { nullable: true })
     stream(@Arg('streamId', () => ObjectIdScalar) streamId: ObjectId) {
-        // find single stream
+        // 1. find single stream
         return StreamModel.findById(streamId);
     }
-}
+
+    @Query(() => [Stream])
+    @UseMiddleware(isAuth)
+    streams(@Ctx() ctx: MyContext) {
+        // 2. display all streams for the current user
+        return StreamModel.find({ author: ctx.res.locals.userId });
+    }
+
+    @Mutation(() => Stream)
+    @UseMiddleware(isAuth)
+    async assDtream(
+        @Arg('input') streamInput: StreamInput,
+        @Ctx() ctx: MyContext
+    ): Promise<Stream> {
+        // 3. create new user's stream
+        const stream = new StreamModel({
+            ...streamInput,
+            author: ctx.res.locals.userId,
+        } as Stream);
+        await stream.save()
+        return stream;
+    }
+
+    @Mutation(() => Stream)
+    @UseMiddleware(isAuth)
+    async editStream(@Arg('input') streamInput : StreamInput, @Ctx() ctx: MyContext): Promise<Stream> {
+        const { id, title, description, url } = streamInput;
+        const stream = await StreamModel.findOneAndUpdate(
+            { _id: id, author: ctx.res.locals.userId }, 
+            { title, description, url },
+            { runValidators: true, new: true }
+        );
+        if (!stream) {
+            throw new Error('Stream not found')
+        }
+        return stream;
+    }
+
+    @Mutation(() => Boolean)
+    @UseMiddleware(isAuth)
+    async deleteStream(@Arg('streamId', () => ObjectIdScalar) streamId : ObjectId, @Ctx() ctx: MyContext): Promise<Boolean | undefined> {
+        const deleted = await StreamModel.findOneAndDelete({ _id: streamId, author: ctx.res.locals.userId });
+        if (!deleted) {
+            throw new Error('Stream not found');
+        }
+        return true;
+    }
+
+    @FieldResolver()
+    async author(@Root() stream: Stream): Promise<User | null> {
+        return await UserModel.findById(stream.author);
+    }
+ }

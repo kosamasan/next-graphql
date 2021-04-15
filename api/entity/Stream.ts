@@ -7,7 +7,7 @@ import { Ref } from '../types/Ref';
 @ObjectType({ description: 'Stream embedded post content' })
 export class Stream {
     @Field()
-    readonly _id: ObjectId;
+    readonly id: ObjectId;
 
     @Field()
     @Property({ required: true })
