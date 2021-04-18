@@ -41,9 +41,9 @@ export class StreamResolver {
     @Mutation(() => Stream)
     @UseMiddleware(isAuth)
     async editStream(@Arg('input') streamInput : StreamInput, @Ctx() ctx: MyContext): Promise<Stream> {
-        const { id, title, description, url } = streamInput;
+        const { _id, title, description, url } = streamInput;
         const stream = await StreamModel.findOneAndUpdate(
-            { _id: id, author: ctx.res.locals.userId }, 
+            { _id: _id, author: ctx.res.locals.userId }, 
             { title, description, url },
             { runValidators: true, new: true }
         );

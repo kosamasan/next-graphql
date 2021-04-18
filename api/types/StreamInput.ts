@@ -6,7 +6,7 @@ import { Stream } from '../entity/Stream';
 @InputType()
 export class StreamInput implements Partial<Stream> {
     @Field({ nullable: true })
-    id?: ObjectId;
+    _id?: ObjectId;
 
     @Field()
     title: string;
