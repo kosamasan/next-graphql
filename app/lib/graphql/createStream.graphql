@@ -1,0 +1,8 @@
+mutation CreateStream($input:StreamInput!) {
+  assDtream(input:$input) {
+    _id
+    title
+    description
+    url
+  }
+}
